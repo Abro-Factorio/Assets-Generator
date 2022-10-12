@@ -28,7 +28,7 @@ namespace Textures_Generator
 		/// </summary>
 		public void DoJob()
 		{
-			texture.Process(Program.baseHue + hue, shade, id, globalId);
+			texture.Process(Program.Settings.baseHue + hue, shade, id, globalId);
 		}
 	}
 }

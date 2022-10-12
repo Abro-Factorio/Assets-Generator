@@ -26,12 +26,22 @@ namespace Textures_Generator
 		/// <param name="globalId"></param>
 		public void Process(float hue, float shade, int id, int globalId)
 		{
-			var processingTexture = baseTexture.Clone(ctx => {
-				ctx.Hue(hue);
-				ctx.Saturate(Program.saturation);
-				ctx.GaussianSharpen(Program.sharpen);
-				ctx.Lightness(shade);
-			});
+
+			var processingTexture = baseTexture.Clone(ctx => { });
+
+			if (HasMask())
+			{
+				var processingMask = mask.Clone(ApplyDiff(hue, shade, id, globalId));
+				processingTexture.Mutate(ctx =>
+				{
+					ctx.DrawImage(processingMask, 1);
+				});
+			}
+			else
+			{
+				processingTexture.Mutate(ApplyDiff(hue, shade, id, globalId));
+			}
+
 			var extension = Path.GetExtension(relativePath);
 			
 
@@ -42,7 +52,19 @@ namespace Textures_Generator
 			Console.WriteLine($"[{globalId}] Saved texture variation (hue: {hue}, value: {shade}): {output}");
 		}
 
-
+		/// <summary>
+		/// Госпаде ну и костыль, мне стыдно, правда
+		/// </summary>
+		private Action<IImageProcessingContext> ApplyDiff(float hue, float shade, int id, int globalId)
+		{
+			Action<IImageProcessingContext> action = ctx => {
+				ctx.Hue(hue);
+				ctx.Saturate(Program.Settings.saturation);
+				ctx.GaussianSharpen(Program.Settings.sharpen);
+				ctx.Lightness(shade);
+			};
+			return action;
+		}
 
 
 		/// <summary>
@@ -74,6 +96,7 @@ namespace Textures_Generator
 			try
 			{
 				texture.mask = Image.Load(texture.GetMaskPath());
+				Console.WriteLine("Найдена маска для "+texture.textureName);
 			}
 			catch(Exception e)
 			{

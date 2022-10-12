@@ -1,6 +1,4 @@
-﻿
-
-using SixLabors.ImageSharp.Processing;
+﻿using SixLabors.ImageSharp.Processing;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using Textures_Generator;
@@ -8,27 +6,19 @@ namespace Textures_Generator;
 
 internal class Program
 {
-	// TODO Добавить файл конфига
-	internal static int hues = 5; // количество оттенков для генерации. Чем меньше значение, тем меньше вариаций будет сгенерировано, но тем более явные будут различия.
-	internal static int shades = 5; // количество степеней затенения.
-	internal static float baseHue = 0; // базовый сдвиг значения цвета. Чтоб первый был не прям такойже как оригинал. По сути бесполезен, так как помимо смены цвета применяется резкость и насыщение цветов.
-
-	internal static float minShade = 0.75f; // Минимальный коэффициент затенения. 0 - полностью чёрный, 1 - оригрнал. 75% достаточно, текстура и так тёмная.
-	internal static float maxShade = 1; // Максимальный коэффициент затенения. Значения больше 1 будут осветлять текстуру.
-
-	internal static float sharpen = 2; // Значение резкости. Даже 2 почти превращает разделители в кашу, но мало влияет на конвейеры.
-	internal static float saturation = 2; // Значение насыщения. Делает текстуру сочнее.
+	public static Settings? Settings { get; private set; }
 
 
 
 	static void Main(string[] args)
 	{
+		Settings = Settings.Load();
+
 		Directory.CreateDirectory("Input");
 		Directory.CreateDirectory("Output");
 
 		List<Texture> textures = ParseTextures("Input");
 		ProcessTextures(textures);
-		
 	}
 
 
@@ -50,8 +40,14 @@ internal class Program
 		Stopwatch stopWatch = new Stopwatch();
 		stopWatch.Start();
 
-		// WorkInConsistently(jobs); // Для любителей долгих вычислений.
-		WorkInParallel(jobs);
+		if (Program.Settings.painMode)
+		{
+			WorkConsistently(jobs); // Для любителей долгих вычислений.
+		}
+		else
+		{
+			WorkInParallel(jobs);
+		}
 
 		stopWatch.Stop();
 		Console.WriteLine($"Все задачи выполнены за {stopWatch.Elapsed}");
@@ -72,13 +68,13 @@ internal class Program
 		foreach (var texture in textures)
 		{
 			var counter = 0;
-			for (int i = 0; i < Program.hues; i++)
+			for (int i = 0; i < Program.Settings.hues; i++)
 			{
-				for (int j = 0; j < Program.shades; j++)
+				for (int j = 0; j < Program.Settings.shades; j++)
 				{
 					counter++;
-					float hue = (360f / Program.hues) * i;
-					float shade = Program.maxShade - ((Program.maxShade - Program.minShade) / Program.shades) * j;
+					float hue = (360f / Program.Settings.hues) * i;
+					float shade = Program.Settings.maxShade - ((Program.Settings.maxShade - Program.Settings.minShade) / Program.Settings.shades) * j;
 					jobs.Add(new Job(texture, hue, shade, counter, jobs.Count));
 				}
 			}
@@ -93,7 +89,7 @@ internal class Program
 	/// Чем больше у вас ядер, тем больнее на это будет смотреть
 	/// </summary>
 	/// <param name="jobs">Список задач</param>
-	private static void WorkInConsistently(List<Job> jobs)
+	private static void WorkConsistently(List<Job> jobs)
 	{
 		foreach (Job job in jobs)
 		{
@@ -104,7 +100,7 @@ internal class Program
 
 
 	/// <summary>
-	/// Чем меньше у вас ядер, тем меньше отличий от WorkInConsistently
+	/// Чем меньше у вас ядер, тем меньше отличий от WorkConsistently
 	/// </summary>
 	/// <param name="jobs">Список задач</param>
 	private static void WorkInParallel(List<Job> jobs)
