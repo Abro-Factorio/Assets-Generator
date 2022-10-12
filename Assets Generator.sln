@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Textures Generator", "Textures Generator.csproj", "{EAB17183-8564-40D5-AFD5-872ACDA3CC10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Textures Generator", "Textures-Generator\Textures Generator.csproj", "{EAB17183-8564-40D5-AFD5-872ACDA3CC10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Names Generator", "Names-Generator\Names Generator.csproj", "{8B02CA75-48CA-4BB8-A332-DEC894092B94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EAB17183-8564-40D5-AFD5-872ACDA3CC10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAB17183-8564-40D5-AFD5-872ACDA3CC10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAB17183-8564-40D5-AFD5-872ACDA3CC10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B02CA75-48CA-4BB8-A332-DEC894092B94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B02CA75-48CA-4BB8-A332-DEC894092B94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B02CA75-48CA-4BB8-A332-DEC894092B94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B02CA75-48CA-4BB8-A332-DEC894092B94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
